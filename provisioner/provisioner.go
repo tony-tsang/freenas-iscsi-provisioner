@@ -8,7 +8,8 @@ import (
 	"time"
 
 	"github.com/golang/glog"
-	"github.com/kubernetes-incubator/external-storage/lib/controller"
+	//"github.com/kubernetes-incubator/external-storage/lib/controller"
+    "github.com/kubernetes-sigs/sig-storage-lib-external-provisioner/controller"
 	"github.com/travisghansen/freenas-iscsi-provisioner/freenas"
 	v1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -340,7 +341,7 @@ func (p *freenasProvisioner) getAccessModes() []v1.PersistentVolumeAccessMode {
 	}
 }
 
-func (p *freenasProvisioner) Provision(options controller.VolumeOptions) (*v1.PersistentVolume, error) {
+func (p *freenasProvisioner) Provision(options controller.ProvisionOptions) (*v1.PersistentVolume, error) {
 	if !AccessModesContainedInAll(p.getAccessModes(), options.PVC.Spec.AccessModes) {
 		return nil, fmt.Errorf("invalid AccessModes %v: only AccessModes %v are supported", options.PVC.Spec.AccessModes, p.getAccessModes())
 	}
@@ -404,7 +405,7 @@ func (p *freenasProvisioner) Provision(options controller.VolumeOptions) (*v1.Pe
 	var zvolVolsize int64
 	volSize := options.PVC.Spec.Resources.Requests[v1.ResourceName(v1.ResourceStorage)]
 	zvolVolsize = volSize.Value()
-	zvolVolsizeGB := (float64(zvolVolsize) / 1024 / 1024 / 1024)
+	zvolVolsizeGB := float64(zvolVolsize) / 1024 / 1024 / 1024
 
 	zvol := freenas.Zvol{
 		Name:        zvolName,

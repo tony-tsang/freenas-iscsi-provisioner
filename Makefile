@@ -9,7 +9,8 @@ tmp:
 	mkdir -p tmp/
 
 vendor:
-	glide install -v --strip-vcs
+	go mod vendor
+#	glide install -v --strip-vcs
 
 $(BIN)/freenas-provisioner build: vendor $(BIN) $(shell find . -name "*.go")
 	env CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -a -ldflags '-extldflags "-static"' -o $(BIN)/freenas-iscsi-provisioner .
